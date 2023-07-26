@@ -4,76 +4,181 @@ import 'package:flappy_bird/flappybob.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  const HomePage({Key? key}) : super(key: key);
 
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  static double bobYaxis = 0;
+  // bob variables
+  static double bobY = 0;
+  double initialPos = bobY;
   double time = 0;
   double height = 0;
-  double initialHeight = bobYaxis;
+  double gravity = -4.9;
+  double velocity = 2.7; // how strong the jump is
+  double birdWidth = 0.1; // out of 2, 2 being the entire width of the screen
+  double birdHeight = 0.1;
+
+  // game variables
   bool gameIsStarted = false;
+
+  // barrier variables
+  static List<double> barrierX = [2, 2 + 1.5];
+  static double barrierWidth = 0.5; // out of 2
+  List <List<double>> barrierHeight = [
+    // out of 2, where 2 is the entire height of the screen
+    // topHeight, bottomHeight
+    [0.6, 0.4],
+    [0.4, 0.6],
+  ];
+
 
   void jump() {
     setState(() {
+      print("jump");
       time = 0;
-      initialHeight = height;
+      initialPos = bobY;
     });
   }
 
   void startGame() {
+    print("startgame");
+
     gameIsStarted = true;
-    Timer.periodic(const Duration(milliseconds: 50), (timer) {
-      time += 0.7;
-      height = -4.9 * time * time + 2.8 * time;
+    Timer.periodic(Duration(milliseconds: 10), (timer) {
+      height = gravity * time * time + velocity * time;
       setState(() {
-        initialHeight = bobYaxis - height;
+        bobY = initialPos - height;
       });
-      if (bobYaxis > 1) {
+
+      print(initialPos);
+      print(height);
+      if (birdIsDead()) {
         timer.cancel();
-        gameIsStarted = false;
+        _showDialog();
       }
+
+      time += 0.008;
     });
+  }
+
+  void resetGame() {
+    Navigator.pop(context); // dismisses the dialog
+    setState(() {
+      bobY = 0;
+      gameIsStarted = false;
+      time = 0;
+      initialPos = bobY;
+    });
+  }
+
+  void _showDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Colors.brown,
+          title: const Center(
+            child: Text(
+              "G A M E  O V E R",
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+          actions: [
+            GestureDetector(
+              onTap: resetGame,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(5),
+                child: Container(
+                  padding: const EdgeInsets.all(7),
+                  color: Colors.white,
+                  child: const Text(
+                    "PLAY AGAIN",
+                    style: TextStyle(color: Colors.brown),
+                  ),
+                ),
+              ),
+            )
+          ],
+        );
+      },
+    );
+  }
+
+  bool birdIsDead() {
+    if (bobY > 1 || bobY < -1) {
+      return true;
+    }
+
+    return false;
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
-        children: [
-          Expanded(
-            flex: 3,
-            child: GestureDetector(
-              onTap: () {
-                if (gameIsStarted) {
-                  jump();
-                } else {
-                  startGame();
-                }
-              },
-              child: AnimatedContainer(
-                alignment: Alignment(0, bobYaxis),
-                duration: const Duration(milliseconds: 0),
+    return GestureDetector(
+      onTap: gameIsStarted ? jump : startGame,
+      child: Scaffold(
+        body: Column(
+          children: [
+            Expanded(
+              flex: 3,
+              child: Container(
                 color: Colors.blueGrey,
-                child: const FlappyBob(),
+                child: Center(
+                  child: Stack(
+                    children: [
+                      FlappyBob(
+                        bobY: bobY,
+                      ),
+                      Container(
+                        alignment: Alignment(0, -0.3),
+                        child: gameIsStarted
+                        ? const Text('')
+                        : const Text(
+                          'T A P  T O  P L A Y',
+                          style: TextStyle(fontSize: 22, color: Colors.white),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ),
-          ),
-          SizedBox(
-            height: 25,
-            child: Container(
+            Container(
+              height: 20,
               color: Colors.greenAccent,
             ),
-          ),
-          Expanded(
-            child: Container(
-              color: Colors.brown,
-            ),
-          )
-        ],
+            Expanded(
+              child: Container(
+                color: Colors.brown,
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text('S C O R E', style: TextStyle(fontSize: 20, color: Colors.white),),
+                        SizedBox(height: 20,),
+                        Text('0', style: TextStyle(fontSize: 20, color: Colors.white),),
+                      ],
+                    ),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text('H I G H S C O R E', style: TextStyle(fontSize: 20, color: Colors.white),),
+                        SizedBox(height: 20,),
+                        Text('10', style: TextStyle(fontSize: 20, color: Colors.white),),
+                      ],
+                    )
+                  ],
+                ),
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

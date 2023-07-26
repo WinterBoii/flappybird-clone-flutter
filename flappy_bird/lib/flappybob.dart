@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 
 class FlappyBob extends StatelessWidget {
-  const FlappyBob({super.key});
+  // ignore: prefer_typing_uninitialized_variables
+  final bobY;
+
+  FlappyBob({this.bobY});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 64,
-      width: 64,
+      alignment: Alignment(0, bobY),
       child: Image.asset(
         'lib/assets/Bob.png',
+        width: 57,
       ),
     );
   }
