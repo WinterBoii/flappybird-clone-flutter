@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flappy_bird/barrier.dart';
 import 'package:flappy_bird/flappybob.dart';
 import 'package:flutter/material.dart';
 
@@ -18,8 +19,8 @@ class _HomePageState extends State<HomePage> {
   double height = 0;
   double gravity = -4.9;
   double velocity = 2.7; // how strong the jump is
-  double birdWidth = 0.1; // out of 2, 2 being the entire width of the screen
-  double birdHeight = 0.1;
+  double bobWidth = 0.1; // out of 2, 2 being the entire width of the screen
+  double bobHeight = 0.1;
 
   // game variables
   bool gameIsStarted = false;
@@ -113,6 +114,15 @@ class _HomePageState extends State<HomePage> {
       return true;
     }
 
+    // check if bob hit barrier x and y
+    for (int i = 0; i < barrierX.length;) {
+      if (barrierX[i] <= bobWidth && barrierX[i] + barrierWidth >= -bobWidth &&
+      (bobY <= -1 + barrierHeight[i][0]) ||
+      bobY +  bobHeight >= 1 - barrierHeight[i][1]) {
+        return true;
+      }
+    }
+
     return false;
   }
 
@@ -132,6 +142,8 @@ class _HomePageState extends State<HomePage> {
                     children: [
                       FlappyBob(
                         bobY: bobY,
+                        bobHeight: bobHeight,
+                        bobWidth: bobWidth,
                       ),
                       Container(
                         alignment: Alignment(0, -0.3),
@@ -141,6 +153,30 @@ class _HomePageState extends State<HomePage> {
                           'T A P  T O  P L A Y',
                           style: TextStyle(fontSize: 22, color: Colors.white),
                         ),
+                      ),
+                      MyBarrier(
+                        barrierX: barrierX[0],
+                        barrierWidth:  barrierWidth,
+                        barrierHeight: barrierHeight[0][0],
+                        isBottomBarrier: false,
+                      ),
+                      MyBarrier(
+                        barrierX: barrierX[0],
+                        barrierWidth:  barrierWidth,
+                        barrierHeight: barrierHeight[0][1],
+                        isBottomBarrier: true,
+                      ),
+                      MyBarrier(
+                        barrierX: barrierX[1],
+                        barrierWidth:  barrierWidth,
+                        barrierHeight: barrierHeight[1][0],
+                        isBottomBarrier: false,
+                      ),
+                      MyBarrier(
+                        barrierX: barrierX[1],
+                        barrierWidth:  barrierWidth,
+                        barrierHeight: barrierHeight[1][1],
+                        isBottomBarrier: true,
                       ),
                     ],
                   ),
