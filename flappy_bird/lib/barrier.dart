@@ -21,8 +21,8 @@ class MyBarrier extends StatelessWidget {
         isBottomBarrier ? 1 : -1),
       child: Container(
         color: Colors.green,
-        width: MediaQuery.of(context).size.width * barrierWidth / 2,
-        height: MediaQuery.of(context).size.height * 3 / 4 * barrierHeight / 2,
+        width: MediaQuery.sizeOf(context).width * barrierWidth / 2,
+        height: MediaQuery.sizeOf(context).height * 3 / 4 * barrierHeight / 2,
       ),
     );
   }

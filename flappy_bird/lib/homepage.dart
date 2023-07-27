@@ -27,7 +27,7 @@ class _HomePageState extends State<HomePage> {
 
   // barrier variables
   static List<double> barrierX = [2, 2 + 1.5];
-  static double barrierWidth = 0.5; // out of 2
+  static double barrierWidth = 0.3; // out of 2
   List <List<double>> barrierHeight = [
     // out of 2, where 2 is the entire height of the screen
     // topHeight, bottomHeight
@@ -48,7 +48,7 @@ class _HomePageState extends State<HomePage> {
     print("startgame");
 
     gameIsStarted = true;
-    Timer.periodic(Duration(milliseconds: 10), (timer) {
+    Timer.periodic(const Duration(milliseconds: 10), (timer) {
       height = gravity * time * time + velocity * time;
       setState(() {
         bobY = initialPos - height;
@@ -61,8 +61,24 @@ class _HomePageState extends State<HomePage> {
         _showDialog();
       }
 
+      moveMap();
+
       time += 0.008;
     });
+  }
+
+  void moveMap() {
+    for (int i = 0; i < barrierX.length; i++) {
+      // keep barriers moving
+      setState(() {
+        barrierX[i] -= 0.005;
+      });
+
+      // if barrier exists left part of screen, keep it loop
+      if (barrierX[i] < -1.5) {
+        barrierX[i] += 3;
+      }
+    }
   }
 
   void resetGame() {
@@ -115,11 +131,12 @@ class _HomePageState extends State<HomePage> {
     }
 
     // check if bob hit barrier x and y
-    for (int i = 0; i < barrierX.length;) {
-      if (barrierX[i] <= bobWidth && barrierX[i] + barrierWidth >= -bobWidth &&
-      (bobY <= -1 + barrierHeight[i][0]) ||
-      bobY +  bobHeight >= 1 - barrierHeight[i][1]) {
-        return true;
+    for (int i = 0; i < barrierX.length; i++) {
+      if (barrierX[i] <= bobWidth &&
+        barrierX[i] + barrierWidth >= -bobWidth &&
+        (bobY <= -1 + barrierHeight[i][0]) ||
+          bobY +  bobHeight >= 1 - barrierHeight[i][1]) {
+            return true;
       }
     }
 
@@ -146,7 +163,7 @@ class _HomePageState extends State<HomePage> {
                         bobWidth: bobWidth,
                       ),
                       Container(
-                        alignment: Alignment(0, -0.3),
+                        alignment: const Alignment(0, -0.3),
                         child: gameIsStarted
                         ? const Text('')
                         : const Text(
@@ -163,13 +180,13 @@ class _HomePageState extends State<HomePage> {
                       MyBarrier(
                         barrierX: barrierX[0],
                         barrierWidth:  barrierWidth,
-                        barrierHeight: barrierHeight[0][1],
+                        barrierHeight: barrierHeight[1][0],
                         isBottomBarrier: true,
                       ),
                       MyBarrier(
                         barrierX: barrierX[1],
                         barrierWidth:  barrierWidth,
-                        barrierHeight: barrierHeight[1][0],
+                        barrierHeight: barrierHeight[0][1],
                         isBottomBarrier: false,
                       ),
                       MyBarrier(

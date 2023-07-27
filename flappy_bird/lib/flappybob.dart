@@ -18,8 +18,8 @@ class FlappyBob extends StatelessWidget {
       alignment: Alignment(0, (2 * bobY + bobHeight) / (2 - bobHeight)),
       child: Image.asset(
         'lib/assets/Bob.png',
-        height: MediaQuery.of(context).size.height * 3 / 4 * bobHeight / 2,
-        width: MediaQuery.of(context).size.height * bobWidth / 2,
+        height: MediaQuery.sizeOf(context).height * 3 / 4 * bobHeight / 2,
+        width: MediaQuery.sizeOf(context).height * bobWidth / 2,
         fit: BoxFit.fill,
       ),
     );
