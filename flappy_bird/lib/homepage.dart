@@ -27,7 +27,7 @@ class _HomePageState extends State<HomePage> {
 
   // barrier variables
   static List<double> barrierX = [2, 2 + 1.5];
-  static double barrierWidth = 0.3; // out of 2
+  static double barrierWidth = 0.2; // out of 2
   List <List<double>> barrierHeight = [
     // out of 2, where 2 is the entire height of the screen
     // topHeight, bottomHeight
@@ -53,8 +53,7 @@ class _HomePageState extends State<HomePage> {
       setState(() {
         bobY = initialPos - height;
       });
-
-      print(initialPos);
+      
       print(height);
       if (birdIsDead()) {
         timer.cancel();
@@ -71,7 +70,7 @@ class _HomePageState extends State<HomePage> {
     for (int i = 0; i < barrierX.length; i++) {
       // keep barriers moving
       setState(() {
-        barrierX[i] -= 0.005;
+        barrierX[i] -= 0.008;
       });
 
       // if barrier exists left part of screen, keep it loop
